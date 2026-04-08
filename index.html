@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#4CAF50">
+  <meta name="description" content="お金をためるゲームを遊びながら資産形成。貯蓄額に応じてアバターが成長するビジュアル付き貯蓄トラッカー。">
+  <meta name="author" content="AI Company">
+  <meta name="keywords" content="貯蓄,資産形成,節約,家計簿,财务管理">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="Savings Quest - 貯蓄クエスト">
+  <meta property="og:description" content="遊びながら資産形成！貯蓄額でアバターが成長するビジュアル貯蓄トラッカー">
+  <meta property="og:image" content="icon-512.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Savings Quest">
+  <title>Savings Quest - 貯蓄クエスト</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="alternate icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('SW registered'))
+          .catch(err => console.log('SW failed', err));
+      });
+    }
+  </script>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">メインコンテンツへスキップ</a>
+  <div id="app">
+    <header class="header">
+      <div class="header-brand">
+        <span class="header-icon" role="img" aria-label="貯蓄">💰</span>
+        <h1>Savings Quest <span class="version-badge">V1</span></h1>
+      </div>
+      <div class="header-actions">
+        <button id="btn-theme" class="btn-icon" title="ダークモード" aria-label="ダークモード切替">🌙</button>
+        <button id="btn-settings" class="btn-icon" title="設定" aria-label="設定を開く">⚙️</button>
+      </div>
+    </header>
+
+    <main id="main-content" class="main">
+      <!-- Avatar Section -->
+      <section class="avatar-section" aria-labelledby="avatar-heading">
+        <h2 id="avatar-heading" class="sr-only">アバター進捗</h2>
+        <div class="avatar-container">
+          <div id="avatar" class="avatar level-1" role="img" aria-label="アバター: ひよこ">🐣</div>
+          <div class="avatar-level">
+            <span id="level-text" aria-live="polite">レベル 1</span>
+            <span id="avatar-name">ひよこ</span>
+          </div>
+        </div>
+        <div class="progress-ring" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100000" aria-label="目標までの進捗">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#e0e0e0" stroke-width="8"/>
+            <circle id="progress-circle" cx="50" cy="50" r="45" fill="none" stroke="#4CAF50" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round"/>
+          </svg>
+          <div class="progress-text">
+            <span id="current-amount" aria-live="polite">¥0</span>
+            <span class="separator">/</span>
+            <span id="goal-amount">¥100,000</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Savings Input -->
+      <section class="input-section" aria-labelledby="input-heading">
+        <h2 id="input-heading">貯蓄を記録</h2>
+        <form id="savings-form" class="savings-form" aria-label="貯蓄入力フォーム">
+          <div class="form-group">
+            <label for="amount">金額</label>
+            <div class="input-wrapper">
+              <span class="currency" aria-hidden="true">¥</span>
+              <input type="number" id="amount" min="1" step="1" placeholder="5,000" required aria-describedby="amount-hint">
+              <span id="amount-hint" class="sr-only">半額以上で入力</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="note">メモ（任意）</label>
+            <input type="text" id="note" placeholder="給料日の貯蓄" maxlength="50" aria-describedby="note-hint">
+            <span id="note-hint" class="sr-only">50文字まで入力可能</span>
+          </div>
+          <button type="submit" class="btn-primary">貯蓄を追加 💪</button>
+        </form>
+      </section>
+
+      <!-- Quick Add -->
+      <section class="quick-add" aria-labelledby="quick-heading">
+        <h3 id="quick-heading">クイック追加</h3>
+        <div class="quick-buttons" role="group" aria-label="貯蓄クイック追加">
+          <button class="quick-btn" data-amount="100" aria-label="¥100を追加">¥100</button>
+          <button class="quick-btn" data-amount="500" aria-label="¥500を追加">¥500</button>
+          <button class="quick-btn" data-amount="1000" aria-label="¥1,000を追加">¥1,000</button>
+          <button class="quick-btn" data-amount="5000" aria-label="¥5,000を追加">¥5,000</button>
+          <button class="quick-btn" data-amount="10000" aria-label="¥10,000を追加">¥10,000</button>
+        </div>
+      </section>
+
+      <!-- Chart -->
+      <section class="chart-section" aria-labelledby="chart-heading">
+        <div class="section-header">
+          <h2 id="chart-heading">📊 貯蓄履歴</h2>
+          <div class="chart-tabs" role="tablist" aria-label="期間選択">
+            <button class="chart-tab active" data-period="week" role="tab" aria-selected="true" aria-controls="chart-panel">週</button>
+            <button class="chart-tab" data-period="month" role="tab" aria-selected="false" aria-controls="chart-panel">月</button>
+          </div>
+        </div>
+        <div id="chart-container" class="chart-container" role="region" aria-label="チャート表示領域" id="chart-panel">
+          <canvas id="savings-chart" aria-label="貯蓄グラフ"></canvas>
+        </div>
+      </section>
+
+      <!-- Badges -->
+      <section class="badges-section" aria-labelledby="badges-heading">
+        <h2 id="badges-heading">🏆 達成バッジ</h2>
+        <div id="badges-grid" class="badges-grid" role="list" aria-label="バッジ一覧">
+          <div class="badge locked" data-badge="first" role="listitem" aria-disabled="true"><div class="badge-icon">🌟</div><div class="badge-name">初めの一歩</div></div>
+          <div class="badge locked" data-badge="10k" role="listitem" aria-disabled="true"><div class="badge-icon">💎</div><div class="badge-name">1万円達成</div></div>
+          <div class="badge locked" data-badge="50k" role="listitem" aria-disabled="true"><div class="badge-icon">👑</div><div class="badge-name">5万円達成</div></div>
+          <div class="badge locked" data-badge="100k" role="listitem" aria-disabled="true"><div class="badge-icon">🎖️</div><div class="badge-name">目標達成</div></div>
+          <div class="badge locked" data-badge="streak3" role="listitem" aria-disabled="true"><div class="badge-icon">🔥</div><div class="badge-name">3日連続</div></div>
+        </div>
+      </section>
+
+      <!-- History -->
+      <section class="history-section" aria-labelledby="history-heading">
+        <h2 id="history-heading">📝 最近の記録</h2>
+        <ul id="history-list" class="history-list" aria-label="貯蓄履歴リスト">
+          <li class="empty-item">まだ記録がありません</li>
+        </ul>
+      </section>
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="settings-title">⚙️ 設定</h3>
+          <button class="btn-close" data-close="settings-modal" aria-label="閉じる">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="goal-input">目標金額</label>
+            <div class="input-wrapper">
+              <span class="currency" aria-hidden="true">¥</span>
+              <input type="number" id="goal-input" min="1000" step="1000" value="100000" aria-describedby="goal-hint">
+              <span id="goal-hint" class="sr-only">1,000円以上で設定</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="avatar-name-input">アバター名</label>
+            <input type="text" id="avatar-name-input" maxlength="10" value="ひよこ" aria-describedby="name-hint">
+            <span id="name-hint" class="sr-only">10文字以内で入力</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-save-settings" class="btn-primary">保存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tip Banner (Donation) -->
+    <div class="tip-banner" aria-label="開発者へのサポート">
+      <a href="https://buymeacoffee.com/savingsquest" target="_blank" rel="noopener noreferrer" class="tip-link" aria-label="Buy Me a Coffeeで開発者をサポート">
+        ☕ 開発者を応援する
+      </a>
+    </div>
+
+    <footer class="footer">
+      <p>Savings Quest v1.0</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

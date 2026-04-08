@@ -1,0 +1,38 @@
+{
+  "name": "Savings Quest - 貯蓄クエスト",
+  "short_name": "Savings Quest",
+  "description": "お金をためるゲームを遊びながら資産形成。貯蓄額に応じてアバターが成長するビジュアル付き貯蓄トラッカー。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#4CAF50",
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["finance", "games"],
+  "screenshots": [],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "貯蓄を記録",
+      "short_name": "記録",
+      "description": "新しい貯蓄を追加",
+      "url": "/?action=add",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
